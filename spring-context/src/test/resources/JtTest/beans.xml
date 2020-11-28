@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<bean id="car1" class="JtTest.Car" init-method="init"
+		  destroy-method="destory" scope="singleton"
+		  p:brand="红旗"
+		  p:color="红色"
+		  p:maxSpeed="100"/>
+	<bean id="car2" class="JtTest.Car" init-method="init"
+		  destroy-method="destory"
+		  scope="singleton">
+		<constructor-arg name="maxSpeed">
+			<value>222</value>
+		</constructor-arg>
+		<constructor-arg name="brand" value="賓利"/>
+		<constructor-arg name="color">
+			<value><![CDATA[紅&色]]></value>
+		</constructor-arg>
+		<!--<![CDATA[ 		]]>中的字符串特殊处理，& < > " '五个在xml中为特殊符号-->
+	</bean>
+	<bean id="car3" class="JtTest.Car" init-method="init"
+		  destroy-method="destory" scope="singleton">
+		<property name="maxSpeed" value="111"/>
+		<property name="brand" value="222"/>
+		<property name="color">
+			<value>"dddd"</value>
+		</property>
+	</bean>
+
+	<bean id="car4" class="JtTest.Car" init-method="init"
+		  destroy-method="destory"
+		  scope="singleton">
+		<constructor-arg name="maxSpeed">
+			<value>222</value>
+		</constructor-arg>
+		<constructor-arg name="brand">
+			<null/>
+		</constructor-arg><!--<null/>为注入null-->
+		<constructor-arg name="color">
+			<value><![CDATA[紅&色]]></value>
+		</constructor-arg>
+		<!--<![CDATA[ 		]]>中的字符串特殊处理，& < > " '五个在xml中为特殊符号-->
+	</bean>
+	<bean class="JtTest.AfterHandler"/>
+	<bean class="JtTest.InstantiationHandler"/>
+	<bean class="JtTest.MyBeanFactoryPostPocessor"/><!--将beanFactory
+	的后置处理器添加到容器中-->
+
+	<!--引入外部配置文件-->
+	<bean
+			class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+			p:location="classpath:JtTest/jdbc.properties"
+			p:order="2"/>
+	<context:property-placeholder location="classpath:JtTest/jdbc.properties"
+								  order="2"/>
+	<bean id="car5" class="JtTest.Car"
+		  p:brand="${brand}"/>
+
+
+	<!--通过init方法获取属性值-->
+	<bean id="infoclass" class="JtTest.info" init-method="init"/>
+	<!--引用bean的属性值-->
+	<bean id="useinfo" class="JtTest.userInfo"
+		  p:a="#{infoclass.A}"
+		  p:b="#{infoclass.B}"/>
+
+
+</beans>
